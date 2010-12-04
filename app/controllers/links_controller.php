@@ -63,10 +63,14 @@ class LinksController extends AppController {
         if(!empty($this->data)){
        //     echo $this->data['Link']['link'];
             $this->__twitterCount($this->data['Link']['link']);
+            $this->__stumbleUponCount($this->data['Link']['link']);
+            $this->__facebookCount($this->data['Link']['link']);
+
         }
     }
 
     function __twitterCount($link){
+        
         $str1 = "http://urls.api.twitter.com/1/urls/count.json?url=";
         $str3 = "&callback=twttr.receiveCount";
 
@@ -86,6 +90,50 @@ class LinksController extends AppController {
         echo "<pre>";
         print_r($phpObj);
         echo "</pre>";
+
+        return true;
+    }
+
+    function __stumbleUponCount($link){
+        $str1 = "http://www.stumbleupon.com/services/1.01/badge.getinfo?url=";
+        $url = $str1.$link;
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); //print response page
+
+        $res = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        print_r($res);
+        $phpObj = json_decode($res);
+        echo "<pre>";
+        print_r($phpObj);
+        echo "</pre>";
+
+        return true;
+    }
+
+    function __facebookCount($link){
+        $str = "http://graph.facebook.com/restserver.php?method=links.getStats&urls=";
+        $url = $str.$link;
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); //print response page
+
+        $res = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        print_r($res);
+        $phpObj = json_decode($res);
+        echo "<pre>";
+        print_r($phpObj);
+        echo "</pre>";
+
+        return true;
     }
 }
 ?>
